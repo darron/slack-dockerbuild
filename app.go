@@ -12,8 +12,9 @@ import (
 )
 
 var (
-	url     string
-	channel string
+	url      string
+	channel  string
+	username string
 )
 
 type (
@@ -55,6 +56,7 @@ type (
 func init() {
 	flag.StringVar(&url, "url", "", "Slack Incoming Webhook URL")
 	flag.StringVar(&channel, "channel", "#general", "Slack Channel")
+	flag.StringVar(&username, "username", "Docker Hub", "Bot Name")
 	flag.Parse()
 	if url == "" {
 		log.Fatal("You must specify a url")
@@ -76,7 +78,7 @@ func notifyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// send to slack
 	txt := fmt.Sprintf("%s build from %s complete", build.Repository.RepoName, build.PushData.Pusher)
-	payload := Payload{Channel: channel, Text: txt}
+	payload := Payload{Channel: channel, Username: username, Text: txt}
 	b, err := json.Marshal(payload)
 	if err != nil {
 		log.Printf("Error encoding payload to JSON: %s", err)
